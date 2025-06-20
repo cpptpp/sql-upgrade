@@ -1,0 +1,22 @@
+{
+    "name": "meioa/sql-upgrade",
+    "description": "Automated SQL Execution Tool",
+    "type": "library",
+    "license": "Mit",
+    "autoload": {
+        "psr-4": {
+            "Meioa\\Sql\\Upgrade\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "sunny",
+            "email": "814979326@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "ext-json": "*",
+        "meioa/db": "^1.0"
+    }
+}
