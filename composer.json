@@ -5,7 +5,7 @@
     "license": "Mit",
     "autoload": {
         "psr-4": {
-            "Meioa\\Sql\\Upgrade\\": "src/"
+            "Meioa\\Tools\\": "src/"
         }
     },
     "authors": [

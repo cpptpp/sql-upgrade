@@ -1,8 +1,7 @@
 <?php
 
-namespace Meioa\Sql\Upgrade;
+namespace Meioa\Tools;
 
-use Meioa\Tools\Db;
 
 /**
  * 执行指定目录下所有文件内的sql

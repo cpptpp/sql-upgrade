@@ -1,6 +1,6 @@
 <?php
 
-namespace Meioa\Sql\Upgrade;
+namespace Meioa\Tools;
 
 class DirException extends \RuntimeException
 {
