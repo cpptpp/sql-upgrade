@@ -3,6 +3,9 @@
 namespace Meioa\Tools;
 
 
+use Exception;
+use RuntimeException;
+
 /**
  * 执行指定目录下所有文件内的sql
  */
@@ -17,7 +20,11 @@ class SqlUpgrade
 
     private $_highRiskKeywords = ['drop', 'truncate', 'delete'];
 
-    private $_enbleHighRisk = false;
+    private $_enableHighRisk = false;
+    /**
+     * @var Db
+     */
+    private $_db;
 
 
     /**
@@ -42,11 +49,11 @@ class SqlUpgrade
 
     /**
      * 设置开启、关闭 高风险sql检测
-     * @param false $status
+     * @param bool $status
      * @return $this
      */
     public function setHighRisk($status = false){
-        $this->_enbleHighRisk = $status;
+        $this->_enableHighRisk = $status;
         return $this;
     }
     /**
@@ -68,7 +75,7 @@ class SqlUpgrade
         // 移除单行注释 -- ... 保留换行 原格式不变
         $sql = preg_replace('/\s*--.*(?=\n)/', '', $sql);
         // 移除多余的空白行
-        $sql = preg_replace('/(\r|\n)\s*/', "", $sql);
+        $sql = preg_replace('/([\r\n])\s*/', "", $sql);
         return trim($sql);
     }
 
@@ -103,8 +110,8 @@ class SqlUpgrade
 
         $sql = $this->_getSqlFromFile($sqlFile);
         //检测执行风险
-        if($this->_enbleHighRisk && $this->_checkHighRiskSql($sql)){
-            throw new \RuntimeException(basename($sqlFile).' : HIGH RISK SQL!');
+        if($this->_enableHighRisk && $this->_checkHighRiskSql($sql)){
+            throw new RuntimeException(basename($sqlFile).' : HIGH RISK SQL!');
         }
         $sqlList = explode(';',$sql);
         if(empty($sqlList)){
@@ -121,8 +128,8 @@ class SqlUpgrade
             try {
                 $dbRes = $this->_db->exec($sqlLine);
                 array_push($sqlListRes,[$sqlLine,$dbRes]);
-            } catch(\Exception $e){
-                throw new \RuntimeException('SQL :'.$sqlLine.',ERROR :'.$e->getMessage());
+            } catch(Exception $e){
+                throw new RuntimeException('SQL :'.$sqlLine.',ERROR :'.$e->getMessage());
             }
         }
         return $sqlListRes;
