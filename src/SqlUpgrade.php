@@ -88,7 +88,21 @@ class SqlUpgrade
         // 将扩展名数组转换为适合 glob() 的格式
         $pattern = $sqlDir . '/*.{'. implode(',', $this->_sqlFileSuffix) .'}';
         // 使用 glob() 获取所有非 .lock 文件
-        return glob($pattern, GLOB_BRACE);
+
+        $files = glob($pattern, GLOB_BRACE) ?: [];
+
+        // 提取版本号作为 key，文件路径作为 value
+        $versionMap = [];
+        foreach ($files as $file) {
+            if (preg_match('/^v(\d+)\./i', basename($file), $m)) {
+                $versionMap[(int) $m[1]] = $file;
+            }
+        }
+
+        // 按 key（版本号）正序排序
+        ksort($versionMap);
+
+        return $versionMap;
     }
 
     private function _checkHighRiskSql($sql) {
@@ -150,7 +164,6 @@ class SqlUpgrade
         //$this->_db->exec("use ".$dbConfig['database']);
 //        var_dump($res);die;
         $sqlFileList = $this->_getSqlFileList($sqlDir);
-        ksort($sqlFileList);
 
         //var_dump($sqlFileList);
 
@@ -183,7 +196,7 @@ class SqlUpgrade
         }
 
         //保存执行结果到目录下的sql.lock
-        ksort($sqlUpgradeArr);
+//        ksort($sqlUpgradeArr);
         file_put_contents($sqlLock,json_encode($sqlUpgradeArr));
         return $sqlRes;
     }
